@@ -100,12 +100,14 @@ function mapPlatformShDatabase() : string
                 switch ($endpoint['scheme']) {
                     case 'mysql':
                         // Defaults to the latest MariaDB version
-                        $dbUrl .= '?charset=utf8mb4&serverVersion=mariadb-10.2.12';
+                        $dbVersion = 'mariadb-10.2.12';
+                        $dbUrl .= sprintf('?charset=utf8mb4&serverVersion=%d', $dbVersion);
                         break;
 
                     case 'pgsql':
-                        // Postgres 9.6 is the latest supported version on Platform.sh
-                        $dbUrl .= '?serverVersion=9.6';
+                        // Postgres 10 is the latest supported version on Platform.sh
+                        $dbVersion = '10';
+                        $dbUrl .= sprintf('?serverVersion=%d', $dbVersion);
                 }
 
                 return $dbUrl;
@@ -116,7 +118,8 @@ function mapPlatformShDatabase() : string
     // Hack the Doctrine URL to be syntactically valid in a build hook, even
     // though it shouldn't be used.
     $dbUrl = sprintf(
-        '%s://%s:%s@%s:%s/%s?charset=utf8mb4&serverVersion=10.2',
+        '%s://%s:%s@%s:%s/%s?charset=utf8mb4&serverVersion=%d',
+        $version ?? '10.2.12'
         'mysql',
         '',
         '',
